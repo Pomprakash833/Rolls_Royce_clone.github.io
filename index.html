@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Luxury Car — Prototype UI</title>
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.4/font/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#060606;
+      --panel: rgba(255,255,255,0.04);
+      --glass: rgba(255,255,255,0.06);
+      --muted: #bfc4c9;
+      --accent: linear-gradient(90deg, #bdb8ff 0%, #a6e3ff 100%);
+    }
+
+    html,body{height:100%}
+    body{
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(120,120,140,0.06), transparent),
+                  radial-gradient(900px 500px at 90% 90%, rgba(80,80,90,0.04), transparent),
+                  var(--bg);
+      color: #e9eef3;
+      font-family: 'Montserrat', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    /* Navbar */
+    .navbar-brand { font-family: 'Playfair Display', serif; letter-spacing: 0.12em; font-weight:700;}
+    .nav-link { color: rgba(255,255,255,0.85) !important; }
+    .navbar { backdrop-filter: blur(6px); background: linear-gradient(180deg, rgba(0,0,0,0.25), rgba(0,0,0,0.10)); border-bottom: 1px solid rgba(255,255,255,0.03); }
+
+    /* Hero */
+    .hero {
+      min-height: 80vh;
+      display:flex; align-items:center;
+      position:relative; overflow:hidden;
+      padding-top:5rem; padding-bottom:4rem;
+    }
+    .hero-left h1{
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height:1;
+      margin-bottom: .6rem;
+    }
+    .hero-sub { color: var(--muted); font-size:1.05rem; max-width:46rem; }
+
+    /* Glass card & silhouette */
+    .glass-card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.014));
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 18px;
+      padding: 1.5rem;
+      backdrop-filter: blur(8px) saturate(120%);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+      transform-origin: center;
+    }
+
+    .car-silhouette{
+      height:320px; width:100%;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:12px;
+      display:flex; align-items:center; justify-content:center;
+      position:relative; overflow:hidden;
+    }
+
+    /* stylized silhouette using svg */
+    .car-svg { width:100%; height:100%; opacity:.85; }
+
+    /* Cards */
+    .model-card { transition: transform .35s cubic-bezier(.2,.9,.2,1), box-shadow .35s; cursor:pointer; }
+    .model-card:hover { transform: translateY(-12px) scale(1.02); box-shadow: 0 18px 50px rgba(0,0,0,0.6); }
+
+    /* glass small */
+    .glass-small{ background: rgba(255,255,255,0.03); border-radius:12px; padding:1rem; border: 1px solid rgba(255,255,255,0.04);}
+
+    /* Configurator */
+    .option-btn { border-radius:10px; padding:.5rem .6rem; background: rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.03); color:var(--muted); }
+    .option-btn.active { background: #fff; color:#000; font-weight:600; box-shadow: 0 8px 30px rgba(0,0,0,0.5); transform:translateY(-4px); }
+
+    /* Parallax layers */
+    .parallax { position:absolute; inset:0; pointer-events:none; z-index:0; }
+    .parallax .layer { position:absolute; width:120%; height:120%; transform:translate(-10%,-10%); opacity:.06; filter:blur(30px); }
+
+    /* Animations */
+    @keyframes floaty {
+      0% { transform: translateY(0px) }
+      50% { transform: translateY(-8px) }
+      100% { transform: translateY(0px) }
+    }
+    .floaty { animation: floaty 6s ease-in-out infinite; }
+
+    /* on-scroll reveal */
+    .reveal { opacity:0; transform: translateY(18px); transition: all .7s cubic-bezier(.2,.9,.2,1); }
+    .reveal.show { opacity:1; transform: translateY(0); }
+
+    footer { color:var(--muted); border-top:1px solid rgba(255,255,255,0.03); padding-top:2rem; padding-bottom:2rem; }
+
+    /* Responsive tweaks */
+    @media (max-width: 991px) {
+      .car-silhouette{ height:220px; }
+      .hero { padding-top:4rem; padding-bottom:2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container">
+      <a class="navbar-brand text-white" href="#">LUXURY</a>
+      <button class="navbar-toggler btn btn-dark" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+        <i class="bi bi-list"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav ms-auto align-items-lg-center">
+          <li class="nav-item"><a class="nav-link px-3" href="#models">Models</a></li>
+          <li class="nav-item"><a class="nav-link px-3" href="#heritage">Heritage</a></li>
+          <li class="nav-item"><a class="nav-link px-3" href="#experience">Experience</a></li>
+          <li class="nav-item"><a class="nav-link px-3" href="#configurator">Configurator</a></li>
+          <li class="nav-item"><a class="nav-link btn btn-outline-light ms-3 px-4 rounded-pill" href="#configurator">Build Yours</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="container position-relative">
+      <!-- Parallax decorative -->
+      <div class="parallax">
+        <div class="layer" style="background: radial-gradient(circle at 20% 10%, #bdb8ff 0%, transparent 30%); top:-10%; left:-8%; width:60%; height:60%;"></div>
+        <div class="layer" style="background: radial-gradient(circle at 85% 85%, #73e6ff 0%, transparent 30%); bottom:-10%; right:-12%; width:50%; height:50%;"></div>
+      </div>
+
+      <div class="row align-items-center">
+        <div class="col-lg-6 hero-left">
+          <h1 class="text-white">Phantom — Presence Redefined</h1>
+          <p class="hero-sub">An exercise in absolute presence — handcrafted luxury with quiet power and uncompromised comfort. Experience a tailored environment engineered for calm and crafted for detail.</p>
+
+          <div class="mt-4 d-flex gap-2 flex-wrap">
+            <a href="#configurator" class="btn btn-light btn-lg rounded-pill px-4 shadow-sm">Start Configurator <i class="bi bi-arrow-right ms-2"></i></a>
+            <a href="#experience" class="btn btn-outline-light btn-lg rounded-pill px-4">Explore Experience</a>
+          </div>
+
+          <div class="mt-4 d-flex gap-4 text-muted">
+            <div>
+              <div class="small text-muted">Range</div>
+              <div class="fw-semibold">Up to 350 mi</div>
+            </div>
+            <div>
+              <div class="small text-muted">0–60 mph</div>
+              <div class="fw-semibold">4.4 sec</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-6 mt-4 mt-lg-0">
+          <div class="glass-card">
+            <div class="car-silhouette">
+              <img src="https://specials-images.forbesimg.com/imageserve/5f4e2f719ea3d23d78b167b8/New-2020-Rolls-Royce-Ghost/960x0.png?fit=scale" alt="Rolls Royce Car" class="img-fluid car-img"   style="border-radius: 15px; object-fit: cover;">
+              <!-- SVG silhouette placeholder -->
+              <!-- <svg class="car-svg" viewBox="0 0 1200 400" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"> -->
+                <defs>
+                  <linearGradient id="g" x1="0" x2="1">
+                    <stop offset="0" stop-color="#fff" stop-opacity="0.12"/>
+                    <stop offset="1" stop-color="#fff" stop-opacity="0.02"/>
+                  </linearGradient>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#g)"/>
+                <path d="M50 260 C150 220 340 200 510 220 C680 240 860 240 1030 220 C1130 208 1170 230 1170 230 L1170 260 L50 260 Z" fill="#fff" opacity="0.06"/>
+                <path d="M90 240 C200 210 360 200 540 210 C720 220 880 220 1040 210" stroke="#fff" stroke-width="2" opacity="0.08" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                <!-- glossy highlight -->
+                <ellipse cx="420" cy="280" rx="260" ry="20" fill="#fff" opacity="0.06" />
+              </svg>
+            </div>
+
+            <div class="mt-4 row g-3">
+              <div class="col-4 glass-small text-center">
+                <div class="small text-muted">Top Speed</div>
+                <div class="fw-semibold">250 km/h</div>
+              </div>
+              <div class="col-4 glass-small text-center">
+                <div class="small text-muted">Horsepower</div>
+                <div class="fw-semibold">563 hp</div>
+              </div>
+              <div class="col-4 glass-small text-center">
+                <div class="small text-muted">Luxury</div>
+                <div class="fw-semibold">Bespoke</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MODELS -->
+  <section id="models" class="py-6">
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-end mb-3">
+        <div>
+          <h2 class="h3 mb-0 reveal">Our Models</h2>
+          <p class="text-muted small mb-0">A curated portfolio of vehicles — each an invitation to a different kind of presence.</p>
+        </div>
+      </div>
+
+      <div class="row g-4 mt-3">
+        <!-- Card 1 -->
+        <div class="col-md-4">
+          <div class="p-4 model-card glass-card reveal">
+            <div class="d-flex justify-content-between align-items-start">
+              <div><div class="small text-muted">Model</div><div class="h5 mb-0">Phantom</div></div>
+              <div class="small text-muted">From</div>
+            </div>
+            <div class="my-4" style="height:160px; display:flex; align-items:flex-end; justify-content:center;">
+                <img src="https://hips.hearstapps.com/hmg-prod/amv-prod-cad-assets/images/17q4/692997/2018-rolls-royce-phantom-viii-first-drive-review-car-and-driver-photo-693026-s-original.jpg?resize=1800:*" alt="Rolls Royce Car" class="img-fluid car-img"  style="border-radius: 15px; object-fit: cover;">
+                <div style="width:100%; max-width:340px; height:110px; border-radius:12px; background:linear-gradient(90deg,#2b2b2b,#0c0c0c); box-shadow: inset 0 -20px 40px rgba(0,0,0,0.6);"></div>
+            </div>
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="small text-muted">Base price</div>
+              <div class="fw-semibold">$450,000+</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="col-md-4">
+          <div class="p-4 model-card glass-card reveal">
+            <div class="d-flex justify-content-between align-items-start">
+              <div><div class="small text-muted">Model</div><div class="h5 mb-0">Ghost</div></div>
+              <div class="small text-muted">From</div>
+            </div>
+            <div class="my-4" style="height:160px; display:flex; align-items:flex-end; justify-content:center;">
+                <img src="https://focuspress.ro/wp-content/uploads/2020/09/Rolls-Royce-Ghost-scaled-1.jpg" alt="Rolls Royce Car" class="img-fluid car-img"   style="border-radius: 15px; object-fit: cover;">
+              <div style="width:100%; max-width:340px; height:110px; border-radius:12px; background:linear-gradient(90deg,#333,#0e0e0e);"></div>
+              
+            </div>
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="small text-muted">Base price</div>
+              <div class="fw-semibold">$330,000+</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="col-md-4">
+          <div class="p-4 model-card glass-card reveal">
+            <div class="d-flex justify-content-between align-items-start">
+              <div><div class="small text-muted">Model</div><div class="h5 mb-0">Cullinan</div></div>
+              <div class="small text-muted">From</div>
+            </div>
+            <div class="my-4" style="height:160px; display:flex; align-items:flex-end; justify-content:center;">
+              <div style="width:100%; max-width:340px; height:110px; border-radius:12px; background:linear-gradient(90deg,#282828,#050505);"></div>
+              <img src="data:image/jpeg;base64,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" alt="Rolls Royce Car" class="img-fluid car-img"   style="border-radius: 15px; object-fit: cover;">
+            </div>
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="small text-muted">Base price</div>
+              <div class="fw-semibold">$410,000+</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HERITAGE -->
+  <section id="heritage" class="py-6">
+    <div class="container">
+      <div class="row g-4 align-items-center">
+        <div class="col-lg-6 reveal">
+          <div class="rounded-3 overflow-hidden" style="background:linear-gradient(90deg,#0b1220,#071018);">
+            <div style="padding:3.5rem;">
+              <div class="small text-muted mb-2">Heritage</div>
+              <h3 class="h2 text-white">Craftsmanship through generations</h3>
+              <p class="text-muted">Hand-stitched leather, lacquered wood veneers and meticulous attention to detail define every creation — a lineage of artisanship and bespoke commissioning.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-6 reveal">
+          <div class="row g-3">
+            <div class="col-sm-6">
+              <div class="glass-small">
+                <div class="fw-semibold">Bespoke Commissioning</div>
+                <div class="small text-muted">Personalise every detail with expert craftsmen.</div>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="glass-small">
+                <div class="fw-semibold">Motor Car Art</div>
+                <div class="small text-muted">Commission unique artworks and themed interiors.</div>
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="glass-small d-flex align-items-center gap-3">
+                <div style="width:60px; height:60px; border-radius:12px; background:linear-gradient(90deg,#bdb8ff,#a6e3ff);"></div>
+                <div>
+                  <div class="fw-semibold">Legacy Editions</div>
+                  <div class="small text-muted">Limited-run commissions celebrating marque milestones.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>      
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section id="experience" class="py-6">
+    <div class="container text-center">
+      <div class="reveal">
+        <h2 class="h3 mb-2">The Experience</h2>
+        <p class="text-muted mb-4">An environment designed to be felt — not simply seen. Every surface, sound and light calibrated for comfort.</p>
+      </div>
+
+      <div class="row g-4 mt-3">
+        <div class="col-md-4 reveal">
+          <div class="glass-card p-4">
+            <div class="h5">Cinema of Serenity</div>
+            <p class="small text-muted mb-0">Acoustic optimisation and ambient lighting for elevated calm.</p>
+          </div>
+        </div>
+        <div class="col-md-4 reveal">
+          <div class="glass-card p-4">
+            <div class="h5">Personal Butler</div>
+            <p class="small text-muted mb-0">Concierge-like handover and maintenance experience.</p>
+          </div>
+        </div>
+        <div class="col-md-4 reveal">
+          <div class="glass-card p-4">
+            <div class="h5">Exclusive Events</div>
+            <p class="small text-muted mb-0">Private viewings, bespoke drives and curator-led gatherings.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONFIGURATOR -->
+  <section id="configurator" class="py-6">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-lg-8">
+          <div class="glass-card">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <div class="small text-muted">Configurator</div>
+                <div class="h4 mb-0">Build your Phantom</div>
+              </div>
+              <div class="text-muted small">Estimated price <span id="price" class="fw-semibold">$520,000</span></div>
+            </div>
+
+            <div class="mt-4">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <div class="small text-muted mb-1">Exterior</div>
+                  <div class="d-flex gap-2 flex-wrap">
+                    <button class="option-btn" data-type="exterior" data-value="Black">Black</button>
+                    <button class="option-btn" data-type="exterior" data-value="Arctic White">Arctic White</button>
+                    <button class="option-btn" data-type="exterior" data-value="Deep Purple">Deep Purple</button>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="small text-muted mb-1">Interior</div>
+                  <div class="d-flex gap-2 flex-wrap">
+                    <button class="option-btn active" data-type="interior" data-value="Oatmeal">Oatmeal</button>
+                    <button class="option-btn" data-type="interior" data-value="Obsidian">Obsidian</button>
+                    <button class="option-btn" data-type="interior" data-value="Sandstone">Sandstone</button>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="small text-muted mb-1">Wheels</div>
+                  <div class="d-flex gap-2 flex-wrap">
+                    <button class="option-btn" data-type="wheels" data-value="20'' Classic">20" Classic</button>
+                    <button class="option-btn active" data-type="wheels" data-value="22'' Sport">22" Sport</button>
+                    <button class="option-btn" data-type="wheels" data-value="22'' Chrome">22" Chrome</button>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="small text-muted mb-1">Finish</div>
+                  <div class="d-flex gap-2 flex-wrap">
+                    <button class="option-btn active" data-type="finish" data-value="Polished">Polished</button>
+                    <button class="option-btn" data-type="finish" data-value="Matte">Matte</button>
+                    <button class="option-btn" data-type="finish" data-value="Two-Tone">Two-Tone</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mt-4 d-flex gap-2">
+                <button id="saveConfig" class="btn btn-primary rounded-pill px-4">Save Config</button>
+                <button id="requestCallback" class="btn btn-outline-light rounded-pill px-4">Request Callback</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <aside class="col-lg-4">
+          <div class="glass-card">
+            <div class="small text-muted">Summary</div>
+            <div class="mt-3" id="summary">
+              <div class="d-flex justify-content-between"><div>Exterior</div><div class="fw-semibold">Black</div></div>
+              <div class="d-flex justify-content-between"><div>Interior</div><div class="fw-semibold">Oatmeal</div></div>
+              <div class="d-flex justify-content-between"><div>Wheels</div><div class="fw-semibold">22" Sport</div></div>
+              <div class="d-flex justify-content-between"><div>Finish</div><div class="fw-semibold">Polished</div></div>
+            </div>
+
+            <div class="mt-4">
+              <button class="btn btn-light w-100 rounded-pill">Proceed to Inquiry</button>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="mt-5">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <div>© Luxury Motor Cars — Prototype UI</div>
+        </div>
+        <div class="col-md-6 text-md-end">
+          <a href="#" class="me-3 text-decoration-none text-muted small">Privacy</a>
+          <a href="#" class="me-3 text-decoration-none text-muted small">Terms</a>
+          <a href="#" class="text-decoration-none text-muted small">Contact</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(a=>{
+      a.addEventListener('click', function(e){
+        const target = document.querySelector(this.getAttribute('href'));
+        if(target){
+          e.preventDefault();
+          window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - 74, behavior: 'smooth' });
+        }
+      });
+    });
+
+    // On-scroll reveal
+    const observer = new IntersectionObserver((entries)=>{
+      entries.forEach(entry=>{
+        if(entry.isIntersecting){
+          entry.target.classList.add('show');
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Configurator logic (basic price estimate and summary)
+    const basePrice = 520000;
+    const priceEl = document.getElementById('price');
+    const summaryEl = document.getElementById('summary');
+
+    const state = {
+      exterior: 'Black',
+      interior: 'Oatmeal',
+      wheels: '22" Sport',
+      finish: 'Polished',
+      price: basePrice
+    };
+
+    function updateSummary(){
+      summaryEl.innerHTML = `
+        <div class="d-flex justify-content-between"><div>Exterior</div><div class="fw-semibold">${state.exterior}</div></div>
+        <div class="d-flex justify-content-between"><div>Interior</div><div class="fw-semibold">${state.interior}</div></div>
+        <div class="d-flex justify-content-between"><div>Wheels</div><div class="fw-semibold">${state.wheels}</div></div>
+        <div class="d-flex justify-content-between"><div>Finish</div><div class="fw-semibold">${state.finish}</div></div>
+      `;
+    }
+
+    function computePrice(){
+      // simplistic modifiers for demo
+      let price = basePrice;
+      if(state.exterior === 'Deep Purple') price += 8000;
+      if(state.interior === 'Obsidian') price += 4000;
+      if(state.wheels.includes('22')) price += 6000;
+      if(state.finish === 'Two-Tone') price += 12000;
+      state.price = price;
+      priceEl.textContent = '$' + price.toLocaleString();
+    }
+
+    document.querySelectorAll('.option-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const type = btn.dataset.type;
+        const value = btn.dataset.value;
+
+        // toggle active among same type
+        document.querySelectorAll(`.option-btn[data-type="${type}"]`).forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+
+        // set state
+        state[type] = value;
+        // reflect wheels label escaping
+        if(type === 'wheels') state.wheels = value.replace(/''/g, '"');
+
+        computePrice();
+        updateSummary();
+
+        // tiny animation feedback
+        btn.animate([{ transform:'translateY(0)' }, { transform:'translateY(-6px)' }, { transform:'translateY(0)' }], { duration:300 });
+      });
+    });
+
+    // Pre-populate summary & price
+    // (set initial values from any default active buttons)
+    document.querySelectorAll('.option-btn.active').forEach(b=>{
+      const type = b.dataset.type;
+      state[type] = b.dataset.value;
+    });
+    computePrice();
+    updateSummary();
+
+    // "Save Config" feedback
+    document.getElementById('saveConfig').addEventListener('click', ()=>{
+      const toast = document.createElement('div');
+      toast.className = 'position-fixed bottom-0 end-0 m-4 p-3 rounded-3 shadow-lg';
+      toast.style.background = 'linear-gradient(90deg,#0b1220,#071018)';
+      toast.innerHTML = '<div class="fw-semibold">Configuration saved</div><div class="small text-muted">We saved your configuration locally for this session.</div>';
+      document.body.appendChild(toast);
+      setTimeout(()=> toast.classList.add('hide'), 2800);
+      setTimeout(()=> toast.remove(), 3200);
+      try { localStorage.setItem('luxury_config', JSON.stringify(state)); } catch(e){}
+    });
+
+    document.getElementById('requestCallback').addEventListener('click', ()=>{
+      alert('Thanks — a representative will contact you to discuss your configuration (prototype demo).');
+    });
+
+    // subtle parallax effect on mouse move for decorative layers
+    document.addEventListener('mousemove', (e)=>{
+      const layers = document.querySelectorAll('.parallax .layer');
+      layers.forEach((layer, idx)=>{
+        const speed = (idx+1) * 0.02;
+        const x = (window.innerWidth/2 - e.clientX) * speed;
+        const y = (window.innerHeight/2 - e.clientY) * speed;
+        layer.style.transform = `translate(${x}px, ${y}px) scale(${1 - idx*0.03})`;
+      });
+    });
+
+  </script>
+</body>
+</html>
