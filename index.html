@@ -3,240 +3,539 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ROLLS ROYCE — Prototype UI</title>
-
+  <title>ROLLS ROYCE — Phantom</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.4/font/bootstrap-icons.css" rel="stylesheet">
-
   <style>
-    :root{
-      --bg:#060606;
-      --panel: rgba(255,255,255,0.04);
-      --glass: rgba(255,255,255,0.06);
-      --muted: #bfc4c9;
-      --accent: linear-gradient(90deg, #bdb8ff 0%, #a6e3ff 100%);
-    }
-
-    html, body { height: 100%; scroll-behavior: smooth; }
-    body {
-      background: radial-gradient(1200px 600px at 10% 10%, rgba(120,120,140,0.06), transparent),
-                  radial-gradient(900px 500px at 90% 90%, rgba(80,80,90,0.04), transparent),
-                  var(--bg);
-      color: #e9eef3;
-      font-family: 'Montserrat', sans-serif;
-      overflow-x: hidden;
-    }
-
-    /* Navbar */
-    .navbar { backdrop-filter: blur(10px); background: rgba(0,0,0,0.7); border-bottom: 1px solid rgba(255,255,255,0.05); transition: 0.3s; }
-    .navbar-brand { font-family: 'Playfair Display', serif; letter-spacing: 0.12em; font-weight:700;}
-    
-    /* Hero */
-    .hero { min-height: 100vh; display:flex; align-items:center; padding-top: 80px; position:relative; }
-    .hero-left h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 5vw, 4.5rem); line-height: 1.1; }
-    
-    /* Glass Cards */
-    .glass-card {
-      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 20px;
-      backdrop-filter: blur(12px);
-      transition: transform 0.3s ease;
-    }
-    .glass-small { background: rgba(255,255,255,0.04); border-radius: 12px; padding: 1rem; border: 1px solid rgba(255,255,255,0.05); }
-
-    /* Buttons */
-    .option-btn { border-radius:10px; padding: 10px 15px; background: rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color: var(--muted); transition: 0.2s; }
-    .option-btn.active { background: #fff; color: #000; font-weight: 600; box-shadow: 0 5px 15px rgba(255,255,255,0.2); }
-
-    /* Animations & Parallax */
-    .parallax { position:absolute; inset:0; pointer-events:none; z-index:0; }
-    .parallax .layer { position:absolute; border-radius: 50%; opacity: 0.1; filter: blur(60px); }
-    .reveal { opacity:0; transform: translateY(30px); transition: 0.8s ease-out; }
-    .reveal.show { opacity:1; transform: translateY(0); }
-
-    /* Mobile Tweaks */
-    @media (max-width: 768px) {
-      .hero { text-align: center; }
-      .hero-left .d-flex { justify-content: center; }
-      .glass-small { margin-bottom: 10px; }
-    }
+    :root{--bg:#060608;--glass-border:rgba(255,255,255,0.08);--muted:#8c9198;--light:#c8cdd4;--accent-s:#c9c4ff;--accent-e:#9de8ff;--tr:all 0.4s cubic-bezier(0.2,0.9,0.2,1)}
+    *,*::before,*::after{box-sizing:border-box}html{scroll-behavior:smooth}
+    body{background:radial-gradient(ellipse 900px 500px at 5% 0%,rgba(130,100,200,.07),transparent),radial-gradient(ellipse 700px 400px at 95% 100%,rgba(60,130,180,.05),transparent),var(--bg);color:#dde3ea;font-family:'Montserrat',system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+    ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:10px}
+    #loader{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .8s,visibility .8s}
+    #loader.hidden{opacity:0;visibility:hidden;pointer-events:none}
+    .llo{font-family:'Playfair Display',serif;font-size:clamp(1.4rem,4vw,2.2rem);letter-spacing:.25em;color:#fff;margin-bottom:2rem}
+    .lbt{width:min(260px,70vw);height:1px;background:rgba(255,255,255,.1);border-radius:10px;overflow:hidden}
+    .lbb{height:100%;width:0%;background:linear-gradient(90deg,var(--accent-s),var(--accent-e));border-radius:10px;transition:width .05s linear}
+    .lp{margin-top:.75rem;font-size:.7rem;letter-spacing:.15em;color:var(--muted)}
+    #cursor{position:fixed;top:0;left:0;z-index:9998;width:10px;height:10px;background:#fff;border-radius:50%;pointer-events:none;transform:translate(-50%,-50%);transition:width .3s,height .3s;mix-blend-mode:difference}
+    #cursor.expand{width:40px;height:40px}
+    @media(pointer:coarse){#cursor{display:none}}
+    .navbar{backdrop-filter:blur(12px) saturate(140%);background:linear-gradient(180deg,rgba(6,6,8,.85),rgba(6,6,8,.4));border-bottom:1px solid rgba(255,255,255,.04);transition:background .4s,padding .4s;padding-top:1rem;padding-bottom:1rem}
+    .navbar.scrolled{background:rgba(6,6,8,.96);padding-top:.5rem;padding-bottom:.5rem}
+    .navbar-brand{font-family:'Playfair Display',serif;letter-spacing:.18em;font-size:1.1rem;font-weight:700;color:#fff!important}
+    .nav-link{color:rgba(255,255,255,.7)!important;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;position:relative;transition:color .3s}
+    .nav-link::after{content:'';position:absolute;bottom:-2px;left:50%;right:50%;height:1px;background:linear-gradient(90deg,var(--accent-s),var(--accent-e));transition:left .3s,right .3s}
+    .nav-link:hover{color:#fff!important}.nav-link:hover::after{left:0;right:0}
+    .navbar-toggler{border:1px solid rgba(255,255,255,.15)}.navbar-toggler-icon{filter:invert(1)}
+    .hero{min-height:100svh;display:flex;align-items:center;position:relative;overflow:hidden;padding-top:5rem;padding-bottom:3rem}
+    .eyebrow{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:.75rem}
+    .hero h1{font-family:'Playfair Display',serif;font-size:clamp(2.6rem,6vw,5rem);font-weight:600;line-height:1.02;letter-spacing:-.02em;color:#fff}
+    .hero h1 em{font-style:italic;background:linear-gradient(120deg,var(--accent-s),var(--accent-e));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .hero-sub{color:var(--muted);font-size:.92rem;line-height:1.75;max-width:42ch}
+    .sv{font-size:1.25rem;font-weight:600;color:#fff}.sl{font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+    .gc{background:linear-gradient(145deg,rgba(255,255,255,.04),rgba(255,255,255,.015));border:1px solid var(--glass-border);border-radius:20px;backdrop-filter:blur(10px) saturate(120%);box-shadow:0 12px 50px rgba(0,0,0,.55);transition:var(--tr)}
+    .gs{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);border-radius:14px;padding:1rem;transition:var(--tr)}
+    .cf{border-radius:16px;overflow:hidden;position:relative;background:rgba(255,255,255,.02)}
+    .cf img{width:100%;height:220px;object-fit:cover;border-radius:12px;transition:transform .7s cubic-bezier(.2,.9,.2,1);display:block}
+    @media(min-width:768px){.cf img{height:280px}}
+    .cf::after{content:'';position:absolute;inset:0;border-radius:12px;background:linear-gradient(180deg,transparent 50%,rgba(0,0,0,.6));pointer-events:none}
+    .gc:hover .cf img{transform:scale(1.04)}
+    .orb{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0}
+    .orb1{width:500px;height:500px;background:rgba(150,120,255,.08);top:-150px;left:-100px}
+    .orb2{width:400px;height:400px;background:rgba(60,180,240,.07);bottom:-100px;right:-100px}
+    .mc{cursor:pointer;transition:var(--tr);position:relative;overflow:hidden}
+    .mc:hover{transform:translateY(-14px);box-shadow:0 24px 60px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.07)}
+    .mbadge{display:inline-block;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;padding:.25rem .75rem;border-radius:100px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:var(--light);margin-bottom:.5rem}
+    .pt{font-size:1rem;font-weight:600;color:#fff}
+    .ob{border-radius:10px;padding:.45rem .8rem;font-size:.78rem;font-weight:500;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);color:var(--muted);cursor:pointer;transition:var(--tr);white-space:nowrap}
+    .ob:hover{background:rgba(255,255,255,.07);color:var(--light)}
+    .ob.active{background:#fff;color:#000;font-weight:600;border-color:transparent;box-shadow:0 6px 24px rgba(0,0,0,.5);transform:translateY(-3px)}
+    .csw{width:28px;height:28px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:var(--tr);flex-shrink:0}
+    .csw:hover{transform:scale(1.15)}.csw.active{border-color:#fff;transform:scale(1.2);box-shadow:0 0 0 3px rgba(255,255,255,.2)}
+    input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:3px;border-radius:10px;background:rgba(255,255,255,.1);outline:none;cursor:pointer}
+    input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.5)}
+    .rrtab{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;padding:.5rem 1.2rem;border-radius:100px;border:1px solid rgba(255,255,255,.08);background:transparent;color:var(--muted);cursor:pointer;transition:var(--tr)}
+    .rrtab.active{background:#fff;color:#000;font-weight:600;border-color:transparent}
+    .sr{display:flex;justify-content:space-between;align-items:center;padding:.6rem 0;border-bottom:1px solid rgba(255,255,255,.05)}
+    .sr:last-child{border-bottom:none}.sk{font-size:.78rem;color:var(--muted)}.sval{font-size:.82rem;font-weight:600;color:#fff}
+    .cn{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3.5rem);font-weight:700;color:#fff;display:block;background:linear-gradient(120deg,var(--accent-s),var(--accent-e));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .tl{width:1px;background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.15),rgba(255,255,255,.02))}
+    .td{width:10px;height:10px;border-radius:50%;background:var(--accent-s);flex-shrink:0;box-shadow:0 0 12px rgba(201,196,255,.5)}
+    .ty{font-size:.7rem;letter-spacing:.1em;color:var(--muted)}.te{font-size:.85rem;font-weight:500;color:var(--light)}
+    .rtoast{position:fixed;bottom:1.5rem;right:1.5rem;z-index:9000;background:linear-gradient(135deg,#0e1420,#080c14);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:1rem 1.25rem;box-shadow:0 20px 60px rgba(0,0,0,.7);transform:translateY(120%);opacity:0;transition:transform .4s cubic-bezier(.2,.9,.2,1),opacity .4s ease;max-width:min(340px,calc(100vw - 3rem))}
+    .rtoast.show{transform:translateY(0);opacity:1}
+    .rmo{position:fixed;inset:0;z-index:8000;background:rgba(0,0,0,.8);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .35s ease;padding:1rem}
+    .rmo.open{opacity:1;pointer-events:all}
+    .rm{background:linear-gradient(160deg,#0d1219,#080b10);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:clamp(1.5rem,4vw,2.5rem);width:min(540px,100%);transform:translateY(30px) scale(.97);transition:transform .4s cubic-bezier(.2,.9,.2,1);position:relative}
+    .rmo.open .rm{transform:translateY(0) scale(1)}
+    @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+    .floaty{animation:floaty 7s ease-in-out infinite}
+    .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s cubic-bezier(.2,.9,.2,1),transform .7s cubic-bezier(.2,.9,.2,1)}
+    .reveal.show{opacity:1;transform:translateY(0)}
+    .rd1{transition-delay:.1s}.rd2{transition-delay:.2s}.rd3{transition-delay:.3s}
+    section{padding:clamp(3rem,8vw,6rem) 0}
+    .gr{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent)}
+    footer{color:var(--muted);border-top:1px solid rgba(255,255,255,.04);padding:2.5rem 0}
+    footer a{color:var(--muted);text-decoration:none;font-size:.78rem;transition:color .2s}footer a:hover{color:#fff}
+    #btt{position:fixed;bottom:1.5rem;left:1.5rem;z-index:999;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:#fff;font-size:1rem;display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:0;pointer-events:none;transition:var(--tr);backdrop-filter:blur(6px)}
+    #btt.visible{opacity:1;pointer-events:all}#btt:hover{background:rgba(255,255,255,.15);transform:translateY(-3px)}
+    @media(max-width:575px){.ob{padding:.4rem .65rem;font-size:.72rem}.hero h1{font-size:2.4rem}}
+    .fi-ic{width:54px;height:54px;border-radius:14px;background:linear-gradient(135deg,rgba(201,196,255,.15),rgba(157,232,255,.08));display:flex;align-items:center;justify-content:center;margin:0 auto 1rem}
   </style>
 </head>
 <body>
+<div id="loader"><div class="llo">ROLLS ROYCE</div><div class="lbt"><div class="lbb" id="lb"></div></div><div class="lp" id="lp">0%</div></div>
+<div id="cursor"></div>
+<button id="btt" aria-label="Back to top"><i class="bi bi-chevron-up"></i></button>
 
-  <nav class="navbar navbar-expand-lg fixed-top navbar-dark">
-    <div class="container">
-      <a class="navbar-brand" href="#">ROLLS ROYCE</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navMenu">
-        <ul class="navbar-nav ms-auto align-items-center">
-          <li class="nav-item"><a class="nav-link px-3" href="#models">Models</a></li>
-          <li class="nav-item"><a class="nav-link px-3" href="#heritage">Heritage</a></li>
-          <li class="nav-item"><a class="nav-link px-3" href="#experience">Experience</a></li>
-          <li class="nav-item"><a class="nav-link px-3" href="#configurator">Configurator</a></li>
-          <li class="nav-item mt-3 mt-lg-0"><a class="btn btn-outline-light ms-lg-3 px-4 rounded-pill" href="#configurator">Build Yours</a></li>
-        </ul>
-      </div>
+<nav class="navbar navbar-expand-lg fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="#">ROLLS ROYCE</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nm"><span class="navbar-toggler-icon"></span></button>
+    <div class="collapse navbar-collapse" id="nm">
+      <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1 py-3 py-lg-0">
+        <li class="nav-item"><a class="nav-link px-3" href="#models">Models</a></li>
+        <li class="nav-item"><a class="nav-link px-3" href="#heritage">Heritage</a></li>
+        <li class="nav-item"><a class="nav-link px-3" href="#experience">Experience</a></li>
+        <li class="nav-item"><a class="nav-link px-3" href="#configurator">Configurator</a></li>
+        <li class="nav-item ms-lg-2 mt-2 mt-lg-0"><a class="nav-link btn btn-outline-light rounded-pill px-4 py-2" style="font-size:.75rem;letter-spacing:.08em" href="#configurator">Build Yours</a></li>
+      </ul>
     </div>
-  </nav>
+  </div>
+</nav>
 
-  <header class="hero">
-    <div class="container position-relative">
-      <div class="parallax">
-        <div class="layer" style="background: #bdb8ff; top:10%; left:5%; width:300px; height:300px;"></div>
-        <div class="layer" style="background: #a6e3ff; bottom:10%; right:5%; width:250px; height:250px;"></div>
-      </div>
-
-      <div class="row align-items-center g-5">
-        <div class="col-lg-6 hero-left reveal">
-          <h1 class="text-white">Phantom — Presence Redefined</h1>
-          <p class="text-muted mt-3 fs-5">An exercise in absolute presence — handcrafted luxury with quiet power and uncompromised comfort.</p>
-          <div class="mt-4 d-flex gap-2 flex-wrap">
-            <a href="#configurator" class="btn btn-light btn-lg rounded-pill px-4">Start Configurator</a>
-            <a href="#experience" class="btn btn-outline-light btn-lg rounded-pill px-4">Experience</a>
-          </div>
+<header class="hero position-relative">
+  <div class="orb orb1"></div><div class="orb orb2"></div>
+  <div class="container position-relative" style="z-index:1">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-6">
+        <div class="eyebrow">2025 · Phantom Series II</div>
+        <h1>Presence <em>Redefined</em></h1>
+        <p class="hero-sub mt-3">An exercise in absolute refinement — handcrafted by artisans who measure their work in millimetres and their ambition in decades.</p>
+        <div class="d-flex flex-wrap gap-3 mt-4">
+          <a href="#configurator" class="btn btn-light rounded-pill px-4 py-2 fw-semibold">Build Yours <i class="bi bi-arrow-right ms-1"></i></a>
+          <a href="#experience" class="btn btn-outline-light rounded-pill px-4 py-2">Explore</a>
         </div>
-
-        <div class="col-lg-6 reveal">
-          <div class="glass-card p-4">
-            <div class="text-center mb-4">
-               <img src="https://specials-images.forbesimg.com/imageserve/5f4e2f719ea3d23d78b167b8/New-2020-Rolls-Royce-Ghost/960x0.png?fit=scale" class="img-fluid rounded-4" alt="Main Car">
-            </div>
-            <div class="row g-2">
-              <div class="col-6 col-md-4"><div class="glass-small text-center small text-muted">250 km/h<br><span class="text-white">Top Speed</span></div></div>
-              <div class="col-6 col-md-4"><div class="glass-small text-center small text-muted">563 hp<br><span class="text-white">Power</span></div></div>
-              <div class="col-12 col-md-4"><div class="glass-small text-center small text-muted">Bespoke<br><span class="text-white">Luxury</span></div></div>
-            </div>
-          </div>
+        <div class="d-flex flex-wrap gap-4 mt-5">
+          <div><div class="sv">563 hp</div><div class="sl">Horsepower</div></div>
+          <div><div class="sv">4.4s</div><div class="sl">0–60 mph</div></div>
+          <div><div class="sv">250 km/h</div><div class="sl">Top Speed</div></div>
         </div>
       </div>
+      <div class="col-lg-6">
+        <div class="gc p-3 floaty">
+          <div class="cf"><img src="https://specials-images.forbesimg.com/imageserve/5f4e2f719ea3d23d78b167b8/New-2020-Rolls-Royce-Ghost/960x0.png?fit=scale" alt="Rolls Royce Ghost" loading="eager"></div>
+          <div class="row g-2 mt-3">
+            <div class="col-4 gs text-center"><div class="sk">Top Speed</div><div class="sval mt-1">250 km/h</div></div>
+            <div class="col-4 gs text-center"><div class="sk">Engine</div><div class="sval mt-1">6.75L V12</div></div>
+            <div class="col-4 gs text-center"><div class="sk">Torque</div><div class="sval mt-1">900 Nm</div></div>
+          </div>
+        </div>
+      </div>
     </div>
-  </header>
+  </div>
+</header>
+<div class="gr"></div>
 
-  <section id="configurator" class="py-5">
-    <div class="container">
-      <div class="glass-card p-4 p-md-5 reveal">
-        <div class="row g-4">
-          <div class="col-lg-8">
-            <h2 class="h4">Customise Your Phantom</h2>
-            <div class="row mt-4 g-4">
-              <div class="col-md-6">
-                <label class="small text-muted mb-2 d-block">Exterior Paint</label>
-                <div class="d-flex gap-2 flex-wrap">
-                  <button class="option-btn active" data-type="exterior" data-value="Black">Black</button>
-                  <button class="option-btn" data-type="exterior" data-value="Arctic White">White</button>
-                  <button class="option-btn" data-type="exterior" data-value="Deep Purple">Purple</button>
+<section style="padding:3rem 0">
+  <div class="container">
+    <div class="row g-4 text-center">
+      <div class="col-6 col-md-3 reveal"><span class="cn" data-target="120">0</span><div class="small mt-1" style="color:var(--muted);letter-spacing:.08em;text-transform:uppercase;font-size:.7rem">Years of Heritage</div></div>
+      <div class="col-6 col-md-3 reveal rd1"><span class="cn" data-target="35000">0</span><div class="small mt-1" style="color:var(--muted);letter-spacing:.08em;text-transform:uppercase;font-size:.7rem">Cars Delivered</div></div>
+      <div class="col-6 col-md-3 reveal rd2"><span class="cn" data-target="44">0</span><div class="small mt-1" style="color:var(--muted);letter-spacing:.08em;text-transform:uppercase;font-size:.7rem">Countries Served</div></div>
+      <div class="col-6 col-md-3 reveal rd3"><span class="cn" data-target="800">0</span><div class="small mt-1" style="color:var(--muted);letter-spacing:.08em;text-transform:uppercase;font-size:.7rem">Bespoke Options</div></div>
+    </div>
+  </div>
+</section>
+<div class="gr"></div>
+
+<section id="models">
+  <div class="container">
+    <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-5">
+      <div><div class="eyebrow">Portfolio</div><h2 class="h3 mb-0" style="font-family:'Playfair Display',serif">Our Models</h2></div>
+      <div class="d-flex gap-2 flex-wrap">
+        <button class="rrtab active" data-filter="all">All</button>
+        <button class="rrtab" data-filter="sedan">Saloon</button>
+        <button class="rrtab" data-filter="suv">SUV</button>
+      </div>
+    </div>
+    <div class="row g-4" id="modelGrid">
+      <div class="col-md-4" data-cat="sedan">
+        <div class="gc p-4 mc reveal" data-model="Phantom" data-price="450000">
+          <div class="mbadge">Saloon · Flagship</div>
+          <div class="h5 mb-3" style="font-family:'Playfair Display',serif">Phantom</div>
+          <div class="cf mb-4"><img src="https://hips.hearstapps.com/hmg-prod/amv-prod-cad-assets/images/17q4/692997/2018-rolls-royce-phantom-viii-first-drive-review-car-and-driver-photo-693026-s-original.jpg" alt="Phantom" loading="lazy"></div>
+          <div class="d-flex justify-content-between align-items-center"><div class="pt">$450,000+</div><button class="btn btn-sm btn-outline-light rounded-pill px-3 vsb">Specs <i class="bi bi-arrow-right ms-1"></i></button></div>
+        </div>
+      </div>
+      <div class="col-md-4" data-cat="sedan">
+        <div class="gc p-4 mc reveal rd1" data-model="Ghost" data-price="330000">
+          <div class="mbadge">Saloon · Grand Tourer</div>
+          <div class="h5 mb-3" style="font-family:'Playfair Display',serif">Ghost</div>
+          <div class="cf mb-4"><img src="https://focuspress.ro/wp-content/uploads/2020/09/Rolls-Royce-Ghost-scaled-1.jpg" alt="Ghost" loading="lazy"></div>
+          <div class="d-flex justify-content-between align-items-center"><div class="pt">$330,000+</div><button class="btn btn-sm btn-outline-light rounded-pill px-3 vsb">Specs <i class="bi bi-arrow-right ms-1"></i></button></div>
+        </div>
+      </div>
+      <div class="col-md-4" data-cat="suv">
+        <div class="gc p-4 mc reveal rd2" data-model="Cullinan" data-price="410000">
+          <div class="mbadge">SUV · Black Badge</div>
+          <div class="h5 mb-3" style="font-family:'Playfair Display',serif">Cullinan</div>
+          <div class="cf mb-4"><img src="https://specials-images.forbesimg.com/imageserve/5f4e2f719ea3d23d78b167b8/New-2020-Rolls-Royce-Ghost/960x0.png?fit=scale" alt="Cullinan" loading="lazy"></div>
+          <div class="d-flex justify-content-between align-items-center"><div class="pt">$410,000+</div><button class="btn btn-sm btn-outline-light rounded-pill px-3 vsb">Specs <i class="bi bi-arrow-right ms-1"></i></button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="rmo" id="specsModal">
+  <div class="rm">
+    <button id="closeSpecs" style="position:absolute;top:1.25rem;right:1.25rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:50%;width:36px;height:36px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center"><i class="bi bi-x-lg" style="font-size:.9rem"></i></button>
+    <div class="eyebrow">Technical Specifications</div>
+    <h3 id="smTitle" style="font-family:'Playfair Display',serif" class="mb-4">Model</h3>
+    <div id="smSpecs"></div>
+  </div>
+</div>
+<div class="gr"></div>
+
+<section id="heritage">
+  <div class="container">
+    <div class="row g-5 align-items-center">
+      <div class="col-lg-5 reveal">
+        <div class="eyebrow">Since 1906</div>
+        <h2 style="font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,2.8rem)">Craftsmanship<br>through generations</h2>
+        <p class="mt-3" style="color:var(--muted);line-height:1.8;font-size:.9rem">Every Rolls-Royce is hand-assembled in Goodwood, West Sussex. Over 800 bespoke options await — from headliner star constellations to personalised picnic hampers.</p>
+        <a href="#configurator" class="btn btn-light rounded-pill px-4 mt-4">Begin Commissioning</a>
+      </div>
+      <div class="col-lg-7">
+        <div class="row g-3">
+          <div class="col-12 reveal">
+            <div class="gc p-4">
+              <div class="small text-muted mb-3" style="letter-spacing:.08em;text-transform:uppercase;font-size:.7rem">Milestones</div>
+              <div class="d-flex gap-3">
+                <div class="tl mx-auto" style="min-height:200px"></div>
+                <div class="d-flex flex-column justify-content-between" style="flex:1">
+                  <div class="d-flex align-items-start gap-3"><div class="td mt-1"></div><div><div class="ty">1906</div><div class="te">Charles Rolls meets Henry Royce. The Silver Ghost is born.</div></div></div>
+                  <div class="d-flex align-items-start gap-3"><div class="td mt-1"></div><div><div class="ty">1950</div><div class="te">Silver Wraith cements post-war luxury motoring.</div></div></div>
+                  <div class="d-flex align-items-start gap-3"><div class="td mt-1"></div><div><div class="ty">2003</div><div class="te">Phantom reborn. The Goodwood era begins.</div></div></div>
+                  <div class="d-flex align-items-start gap-3"><div class="td mt-1"></div><div><div class="ty">2023</div><div class="te">Spectre — first fully electric Rolls-Royce launched.</div></div></div>
                 </div>
               </div>
-              <div class="col-md-6">
-                <label class="small text-muted mb-2 d-block">Interior Leather</label>
-                <div class="d-flex gap-2 flex-wrap">
-                  <button class="option-btn active" data-type="interior" data-value="Oatmeal">Oatmeal</button>
-                  <button class="option-btn" data-type="interior" data-value="Obsidian">Obsidian</button>
-                </div>
-              </div>
-            </div>
-            <div class="mt-5">
-              <button id="saveConfig" class="btn btn-primary rounded-pill px-5 py-3">Reserve This Build</button>
             </div>
           </div>
-          <aside class="col-lg-4">
-            <div class="glass-small">
-              <p class="small text-muted mb-1">Estimated Value</p>
-              <h3 id="price" class="fw-bold mb-4">$520,000</h3>
-              <div id="summary" class="small">
-                </div>
-            </div>
-          </aside>
+          <div class="col-sm-6 reveal rd1"><div class="gs h-100"><div class="fw-semibold mb-1">Bespoke Commissioning</div><div class="small" style="color:var(--muted)">Personalise every stitch, surface and shade with master craftsmen.</div></div></div>
+          <div class="col-sm-6 reveal rd2"><div class="gs h-100"><div class="fw-semibold mb-1">Legacy Editions</div><div class="small" style="color:var(--muted)">Limited commissions celebrating marque milestones.</div></div></div>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
+<div class="gr"></div>
 
-  <footer class="py-4 text-center border-top border-secondary mt-5">
-    <p class="text-muted small mb-0">© 2026 ROLLS ROYCE PROTOTYPE. Crafted for Excellence.</p>
-  </footer>
+<section id="experience">
+  <div class="container">
+    <div class="text-center mb-5 reveal">
+      <div class="eyebrow">Ownership</div>
+      <h2 style="font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,2.8rem)">The Experience</h2>
+      <p class="mx-auto mt-2" style="color:var(--muted);max-width:50ch;font-size:.9rem">Designed to be felt — not simply seen. Every surface, sound and light calibrated for complete calm.</p>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-4 reveal"><div class="gc p-4 h-100 text-center"><div class="fi-ic"><i class="bi bi-music-note-beamed" style="font-size:1.4rem;color:var(--accent-s)"></i></div><div class="h6 mb-2">Cinema of Serenity</div><p class="small mb-0" style="color:var(--muted)">Acoustic optimisation, ambient lighting and whisper-quiet cabin engineering.</p></div></div>
+      <div class="col-md-4 reveal rd1"><div class="gc p-4 h-100 text-center"><div class="fi-ic"><i class="bi bi-person-check" style="font-size:1.4rem;color:var(--accent-s)"></i></div><div class="h6 mb-2">Personal Liaison</div><p class="small mb-0" style="color:var(--muted)">Concierge-level delivery, dedicated aftersales and white-glove maintenance.</p></div></div>
+      <div class="col-md-4 reveal rd2"><div class="gc p-4 h-100 text-center"><div class="fi-ic"><i class="bi bi-stars" style="font-size:1.4rem;color:var(--accent-s)"></i></div><div class="h6 mb-2">Exclusive Events</div><p class="small mb-0" style="color:var(--muted)">Private viewings, bespoke driving tours and curator-led cultural gatherings.</p></div></div>
+    </div>
+  </div>
+</section>
+<div class="gr"></div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<section id="configurator">
+  <div class="container">
+    <div class="text-center mb-5 reveal"><div class="eyebrow">Commission</div><h2 style="font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,2.8rem)">Build your Phantom</h2></div>
+    <div class="row g-4">
+      <div class="col-lg-8">
+        <div class="gc p-4 reveal">
+          <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+            <div class="h5 mb-0">Configuration</div>
+            <div style="font-size:.85rem;color:var(--muted)">Estimated <span id="priceDisp" style="color:#fff;font-weight:600">$520,000</span></div>
+          </div>
+          <div class="mb-4">
+            <div class="sk mb-2">Exterior Colour</div>
+            <div class="d-flex flex-wrap align-items-center gap-2">
+              <div class="csw active" data-type="exterior" data-value="Midnight Black" style="background:#111" title="Midnight Black"></div>
+              <div class="csw" data-type="exterior" data-value="Arctic White" style="background:#e8e8e0" title="Arctic White"></div>
+              <div class="csw" data-type="exterior" data-value="Deep Claret" style="background:#5a1a2a" title="Deep Claret"></div>
+              <div class="csw" data-type="exterior" data-value="Salamanca Blue" style="background:#1a3a5a" title="Salamanca Blue"></div>
+              <div class="csw" data-type="exterior" data-value="Dark Silver" style="background:#5a5a60" title="Dark Silver"></div>
+              <span id="extLabel" class="small ms-2" style="color:var(--light)">Midnight Black</span>
+            </div>
+          </div>
+          <div class="mb-4">
+            <div class="sk mb-2">Interior Leather</div>
+            <div class="d-flex flex-wrap gap-2">
+              <button class="ob active" data-type="interior" data-value="Oatmeal">Oatmeal</button>
+              <button class="ob" data-type="interior" data-value="Obsidian">Obsidian</button>
+              <button class="ob" data-type="interior" data-value="Sandstone">Sandstone</button>
+              <button class="ob" data-type="interior" data-value="Cherry Red">Cherry Red</button>
+            </div>
+          </div>
+          <div class="mb-4">
+            <div class="sk mb-2">Wheel Design</div>
+            <div class="d-flex flex-wrap gap-2">
+              <button class="ob" data-type="wheels" data-value="20in Classic">20″ Classic</button>
+              <button class="ob active" data-type="wheels" data-value="22in Sport">22″ Sport</button>
+              <button class="ob" data-type="wheels" data-value="22in Chrome">22″ Chrome</button>
+              <button class="ob" data-type="wheels" data-value="22in Carbon">22″ Carbon</button>
+            </div>
+          </div>
+          <div class="mb-4">
+            <div class="sk mb-2">Paint Finish</div>
+            <div class="d-flex flex-wrap gap-2">
+              <button class="ob active" data-type="finish" data-value="Polished">Polished</button>
+              <button class="ob" data-type="finish" data-value="Matte">Matte</button>
+              <button class="ob" data-type="finish" data-value="Two-Tone">Two-Tone</button>
+            </div>
+          </div>
+          <div class="mb-4">
+            <div class="sk mb-2">Optional Packages</div>
+            <div class="d-flex flex-column gap-2">
+              <label class="d-flex align-items-center gap-3 gs" style="cursor:pointer"><input type="checkbox" data-price="18000" data-label="Starlight Headliner" style="accent-color:#c9c4ff"><div><div class="small fw-semibold">Starlight Headliner</div><div style="font-size:.72rem;color:var(--muted)">+$18,000 · 1,340 hand-woven fibre optic lights</div></div></label>
+              <label class="d-flex align-items-center gap-3 gs" style="cursor:pointer"><input type="checkbox" data-price="9500" data-label="Bespoke Audio" style="accent-color:#c9c4ff"><div><div class="small fw-semibold">Bespoke Audio System</div><div style="font-size:.72rem;color:var(--muted)">+$9,500 · 18-speaker surround sound</div></div></label>
+              <label class="d-flex align-items-center gap-3 gs" style="cursor:pointer"><input type="checkbox" data-price="6200" data-label="Champagne Picnic Set" style="accent-color:#c9c4ff"><div><div class="small fw-semibold">Champagne Picnic Set</div><div style="font-size:.72rem;color:var(--muted)">+$6,200 · hand-crafted rear compartment</div></div></label>
+            </div>
+          </div>
+          <div class="d-flex flex-wrap gap-2 mt-4">
+            <button id="btnSave" class="btn btn-light rounded-pill px-4">Save Config <i class="bi bi-bookmark ms-1"></i></button>
+            <button id="btnCall" class="btn btn-outline-light rounded-pill px-4">Request Callback <i class="bi bi-telephone ms-1"></i></button>
+            <button id="btnShare" class="btn btn-outline-light rounded-pill px-4">Share <i class="bi bi-share ms-1"></i></button>
+          </div>
+        </div>
+      </div>
+      <aside class="col-lg-4">
+        <div class="gc p-4 reveal" style="position:sticky;top:90px">
+          <div class="sk mb-3" style="letter-spacing:.1em;text-transform:uppercase;font-size:.68rem">Configuration Summary</div>
+          <div id="sumList" class="mb-4"></div>
+          <div class="gr mb-3"></div>
+          <div class="d-flex justify-content-between align-items-center mb-4"><div class="sk">Estimated Total</div><div id="sumPrice" style="font-size:1.1rem;font-weight:700;color:#fff">$520,000</div></div>
+          <button class="btn btn-light w-100 rounded-pill fw-semibold" id="btnProceed">Proceed to Inquiry</button>
+          <div class="text-center mt-3" style="font-size:.72rem;color:var(--muted)">Prices are indicative. A specialist will confirm your bespoke quote.</div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
 
-  <script>
-    // 1. RESPONSIVE MENU FIX: Auto-close navbar on mobile click
-    const navLinks = document.querySelectorAll('.nav-link, .btn-outline-light');
-    const menuToggle = document.getElementById('navMenu');
-    const bsCollapse = new bootstrap.Collapse(menuToggle, {toggle: false});
-    navLinks.forEach(link => {
-      link.addEventListener('click', () => {
-        if (window.innerWidth < 992) bsCollapse.hide();
-      });
+<footer>
+  <div class="container">
+    <div class="row g-4 align-items-center">
+      <div class="col-md-4"><div style="font-family:'Playfair Display',serif;font-size:1.05rem;letter-spacing:.15em;color:#fff">ROLLS ROYCE</div><div class="small mt-1" style="color:var(--muted)">© 2025 · Prototype UI</div></div>
+      <div class="col-md-4 text-md-center"><div class="d-flex flex-wrap gap-3 justify-content-md-center"><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Legal</a><a href="#">Contact</a></div></div>
+      <div class="col-md-4 text-md-end"><div class="d-flex gap-3 justify-content-md-end"><a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a><a href="#" aria-label="X"><i class="bi bi-twitter-x"></i></a><a href="#" aria-label="YouTube"><i class="bi bi-youtube"></i></a></div></div>
+    </div>
+  </div>
+</footer>
+
+<div class="rmo" id="callbackModal">
+  <div class="rm">
+    <button class="cmbtn" style="position:absolute;top:1.25rem;right:1.25rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:50%;width:36px;height:36px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center"><i class="bi bi-x-lg" style="font-size:.9rem"></i></button>
+    <div class="eyebrow">Get in Touch</div>
+    <h3 style="font-family:'Playfair Display',serif" class="mb-4">Request a Callback</h3>
+    <div class="d-flex flex-column gap-3">
+      <input type="text" id="cbName" placeholder="Your Name" class="form-control" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;border-radius:12px;padding:.75rem 1rem">
+      <input type="tel" id="cbPhone" placeholder="Phone Number" class="form-control" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;border-radius:12px;padding:.75rem 1rem">
+      <select id="cbTime" class="form-select" style="background:#0d1219;border:1px solid rgba(255,255,255,.1);color:#fff;border-radius:12px;padding:.75rem 1rem">
+        <option value="">Preferred Time</option>
+        <option>Morning (9am – 12pm)</option>
+        <option>Afternoon (12pm – 5pm)</option>
+        <option>Evening (5pm – 8pm)</option>
+      </select>
+      <button id="btnSubmitCB" class="btn btn-light rounded-pill py-2 fw-semibold mt-1">Confirm Request</button>
+    </div>
+  </div>
+</div>
+
+<div class="rtoast" id="toast">
+  <div class="d-flex align-items-start gap-3">
+    <i class="bi bi-check-circle-fill mt-1" style="color:var(--accent-s);flex-shrink:0"></i>
+    <div><div class="fw-semibold" id="tTitle">Done</div><div class="small mt-1" style="color:var(--muted)" id="tBody">Action completed.</div></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// 1. LOADER
+const lb=document.getElementById('lb'),lp=document.getElementById('lp'),loader=document.getElementById('loader');
+let pct=0;const lt=setInterval(()=>{pct+=Math.random()*12+3;if(pct>=100){pct=100;clearInterval(lt);}lb.style.width=pct+'%';lp.textContent=Math.floor(pct)+'%';if(pct===100)setTimeout(()=>loader.classList.add('hidden'),400);},80);
+
+// 2. CURSOR
+const cur=document.getElementById('cursor');let mx=0,my=0,cx=0,cy=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+const ac=()=>{cx+=(mx-cx)*.14;cy+=(my-cy)*.14;cur.style.left=cx+'px';cur.style.top=cy+'px';requestAnimationFrame(ac);};ac();
+document.querySelectorAll('a,button,.mc,.csw,.ob,label').forEach(el=>{
+  el.addEventListener('mouseenter',()=>cur.classList.add('expand'));
+  el.addEventListener('mouseleave',()=>cur.classList.remove('expand'));
+});
+
+// 3. NAVBAR + BACK-TO-TOP
+const nav=document.getElementById('mainNav'),btt=document.getElementById('btt');
+window.addEventListener('scroll',()=>{nav.classList.toggle('scrolled',scrollY>60);btt.classList.toggle('visible',scrollY>400);},{passive:true});
+btt.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+
+// 4. SMOOTH SCROLL
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',function(e){
+    const t=document.querySelector(this.getAttribute('href'));if(!t)return;
+    e.preventDefault();window.scrollTo({top:t.getBoundingClientRect().top+scrollY-80,behavior:'smooth'});
+    const nc=bootstrap.Collapse.getInstance(document.getElementById('nm'));if(nc)nc.hide();
+  });
+});
+
+// 5. REVEAL
+const ro=new IntersectionObserver(en=>en.forEach(e=>{if(e.isIntersecting)e.target.classList.add('show');}),{threshold:.1,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+
+// 6. COUNTERS
+const co=new IntersectionObserver(en=>{
+  en.forEach(e=>{
+    if(!e.isIntersecting)return;
+    const el=e.target,target=+el.dataset.target;let cur=0;
+    const step=Math.max(1,Math.ceil(target/100));
+    const t=setInterval(()=>{cur=Math.min(cur+step,target);el.textContent=cur.toLocaleString();if(cur>=target)clearInterval(t);},18);
+    co.unobserve(el);
+  });
+},{threshold:.5});
+document.querySelectorAll('.cn[data-target]').forEach(el=>co.observe(el));
+
+// 7. MODEL FILTER
+document.querySelectorAll('.rrtab[data-filter]').forEach(tab=>{
+  tab.addEventListener('click',function(){
+    document.querySelectorAll('.rrtab[data-filter]').forEach(t=>t.classList.remove('active'));this.classList.add('active');
+    const f=this.dataset.filter;
+    document.querySelectorAll('#modelGrid [data-cat]').forEach(col=>{
+      const match=f==='all'||col.dataset.cat===f;
+      col.style.transition='opacity .35s,transform .35s';
+      if(match){col.style.display='';requestAnimationFrame(()=>{col.style.opacity='1';col.style.transform='scale(1)';});}
+      else{col.style.opacity='0';col.style.transform='scale(.94)';setTimeout(()=>{col.style.display='none';},360);}
     });
+  });
+});
 
-    // 2. SMART SCROLL: Offset for fixed navbar
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const navHeight = document.querySelector('.navbar').offsetHeight;
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-          window.scrollTo({
-            top: target.offsetTop - navHeight,
-            behavior: 'smooth'
-          });
-        }
-      });
-    });
+// 8. SPECS MODAL
+const sd={
+  Phantom:{engine:'6.75L Twin-Turbo V12',hp:'563 hp',torque:'900 Nm',speed:'250 km/h',weight:'2,560 kg',drive:'Rear-Wheel Drive'},
+  Ghost:{engine:'6.75L Twin-Turbo V12',hp:'563 hp',torque:'850 Nm',speed:'250 km/h',weight:'2,490 kg',drive:'All-Wheel Drive'},
+  Cullinan:{engine:'6.75L Twin-Turbo V12',hp:'600 hp',torque:'900 Nm',speed:'250 km/h',weight:'2,660 kg',drive:'All-Wheel Drive'},
+};
+const sm=document.getElementById('specsModal');
+document.querySelectorAll('.vsb').forEach(btn=>{
+  btn.addEventListener('click',e=>{
+    e.stopPropagation();
+    const card=btn.closest('.mc'),model=card.dataset.model,price=(+card.dataset.price).toLocaleString(),s=sd[model]||{};
+    document.getElementById('smTitle').textContent=model;
+    document.getElementById('smSpecs').innerHTML=`
+      <div class="sr"><span class="sk">Engine</span><span class="sval">${s.engine}</span></div>
+      <div class="sr"><span class="sk">Horsepower</span><span class="sval">${s.hp}</span></div>
+      <div class="sr"><span class="sk">Torque</span><span class="sval">${s.torque}</span></div>
+      <div class="sr"><span class="sk">Top Speed</span><span class="sval">${s.speed}</span></div>
+      <div class="sr"><span class="sk">Kerb Weight</span><span class="sval">${s.weight}</span></div>
+      <div class="sr"><span class="sk">Drive Type</span><span class="sval">${s.drive}</span></div>
+      <div class="sr"><span class="sk">Starting From</span><span class="sval">$${price}</span></div>`;
+    sm.classList.add('open');
+  });
+});
+document.getElementById('closeSpecs').addEventListener('click',()=>sm.classList.remove('open'));
+sm.addEventListener('click',e=>{if(e.target===sm)sm.classList.remove('open');});
 
-    // 3. CONFIGURATOR LOGIC
-    const state = { exterior: 'Black', interior: 'Oatmeal', price: 520000 };
-    const priceEl = document.getElementById('price');
-    const summaryEl = document.getElementById('summary');
+// 9. CONFIGURATOR
+const BASE=520000;
+const cfg={exterior:'Midnight Black',interior:'Oatmeal',wheels:'22in Sport',finish:'Polished'};
+const pm={
+  exterior:{'Arctic White':0,'Deep Claret':5000,'Salamanca Blue':5000,'Dark Silver':3000,'Midnight Black':0},
+  interior:{'Oatmeal':0,'Obsidian':4000,'Sandstone':2000,'Cherry Red':7000},
+  wheels:{'20in Classic':0,'22in Sport':6000,'22in Chrome':9000,'22in Carbon':14000},
+  finish:{'Polished':0,'Matte':8000,'Two-Tone':15000}
+};
+function total(){
+  let t=BASE;
+  ['exterior','interior','wheels','finish'].forEach(k=>t+=(pm[k][cfg[k]]||0));
+  document.querySelectorAll('input[type=checkbox][data-price]:checked').forEach(cb=>t+=+cb.dataset.price);
+  return t;
+}
+function animP(el,nv){
+  const cv=parseInt(el.textContent.replace(/\D/g,''))||0,diff=nv-cv,steps=30;let s=0;
+  const ti=setInterval(()=>{s++;el.textContent='$'+(Math.round(cv+diff*(s/steps))).toLocaleString();if(s>=steps)clearInterval(ti);},16);
+}
+function render(){
+  const t=total();
+  animP(document.getElementById('priceDisp'),t);
+  animP(document.getElementById('sumPrice'),t);
+  const extras=[];
+  document.querySelectorAll('input[type=checkbox][data-price]:checked').forEach(cb=>extras.push(cb.dataset.label));
+  const rows=[['Exterior',cfg.exterior],['Interior',cfg.interior],['Wheels',cfg.wheels.replace('in','″')],['Finish',cfg.finish],...extras.map(e=>['Package',e])];
+  document.getElementById('sumList').innerHTML=rows.map(([k,v])=>`<div class="sr"><span class="sk">${k}</span><span class="sval">${v}</span></div>`).join('');
+}
+document.querySelectorAll('.csw').forEach(sw=>{
+  sw.addEventListener('click',function(){
+    document.querySelectorAll('.csw[data-type="exterior"]').forEach(s=>s.classList.remove('active'));
+    this.classList.add('active');cfg.exterior=this.dataset.value;
+    document.getElementById('extLabel').textContent=this.dataset.value;render();
+  });
+});
+document.querySelectorAll('.ob').forEach(btn=>{
+  btn.addEventListener('click',function(){
+    const type=this.dataset.type;
+    document.querySelectorAll(`.ob[data-type="${type}"]`).forEach(b=>b.classList.remove('active'));
+    this.classList.add('active');cfg[type]=this.dataset.value;render();
+    this.animate([{transform:'scale(1)'},{transform:'scale(.94)'},{transform:'scale(1)'}],{duration:200});
+  });
+});
+document.querySelectorAll('input[type=checkbox][data-price]').forEach(cb=>cb.addEventListener('change',render));
+render();
 
-    function updateUI() {
-      summaryEl.innerHTML = `
-        <div class="d-flex justify-content-between mb-2"><span>Exterior</span><strong>${state.exterior}</strong></div>
-        <div class="d-flex justify-content-between"><span>Interior</span><strong>${state.interior}</strong></div>
-      `;
-      let total = 520000;
-      if(state.exterior === 'Deep Purple') total += 15000;
-      if(state.interior === 'Obsidian') total += 5000;
-      priceEl.innerText = '$' + total.toLocaleString();
-    }
+// 10. TOAST
+const toast=document.getElementById('toast');let tt;
+function showToast(title,body){
+  document.getElementById('tTitle').textContent=title;document.getElementById('tBody').textContent=body;
+  toast.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>toast.classList.remove('show'),3600);
+}
 
-    document.querySelectorAll('.option-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const type = btn.dataset.type;
-        document.querySelectorAll(`.option-btn[data-type="${type}"]`).forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        state[type] = btn.dataset.value;
-        updateUI();
-      });
-    });
+// 11. SAVE
+document.getElementById('btnSave').addEventListener('click',()=>{
+  try{localStorage.setItem('rr_cfg',JSON.stringify({...cfg,total:total()}));}catch(_){}
+  showToast('Configuration Saved','Your build has been saved to this browser session.');
+});
 
-    // 4. REVEAL ANIMATION
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) entry.target.classList.add('show');
-      });
-    }, { threshold: 0.1 });
+// 12. SHARE
+document.getElementById('btnShare').addEventListener('click',async()=>{
+  const text=`My Rolls-Royce Phantom — ${cfg.exterior}, ${cfg.interior} interior, ${cfg.wheels} wheels, ${cfg.finish} finish. Total: $${total().toLocaleString()}`;
+  try{if(navigator.share){await navigator.share({title:'My Rolls-Royce',text});return;}
+  await navigator.clipboard.writeText(text);showToast('Copied!','Configuration details copied to clipboard.');}
+  catch(_){showToast('Copied!','Configuration details copied to clipboard.');}
+});
 
-    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+// 13. CALLBACK MODAL
+const cbm=document.getElementById('callbackModal');
+document.getElementById('btnCall').addEventListener('click',()=>cbm.classList.add('open'));
+document.querySelectorAll('.cmbtn').forEach(b=>b.addEventListener('click',()=>cbm.classList.remove('open')));
+cbm.addEventListener('click',e=>{if(e.target===cbm)cbm.classList.remove('open');});
+document.getElementById('btnSubmitCB').addEventListener('click',()=>{
+  const name=document.getElementById('cbName').value.trim(),phone=document.getElementById('cbPhone').value.trim();
+  if(!name||!phone){showToast('Missing Details','Please enter your name and phone number.');return;}
+  cbm.classList.remove('open');showToast('Callback Requested',`We will call ${name} shortly. Thank you.`);
+  ['cbName','cbPhone','cbTime'].forEach(id=>document.getElementById(id).value='');
+});
 
-    // 5. PARALLAX MOUSE EFFECT
-    document.addEventListener('mousemove', (e) => {
-      const layers = document.querySelectorAll('.parallax .layer');
-      layers.forEach((layer, i) => {
-        const x = (window.innerWidth - e.pageX * (i + 1)) / 50;
-        const y = (window.innerHeight - e.pageY * (i + 1)) / 50;
-        layer.style.transform = `translateX(${x}px) translateY(${y}px)`;
-      });
-    });
+// 14. PROCEED
+document.getElementById('btnProceed').addEventListener('click',()=>showToast('Inquiry Submitted','A specialist will be in touch within 24 hours.'));
 
-    document.getElementById('saveConfig').onclick = () => alert("Configuration Saved to your Profile!");
+// 15. ESC KEY
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){sm.classList.remove('open');cbm.classList.remove('open');}});
 
-    updateUI(); // Init
-  </script>
+// 16. PARALLAX ORBS
+document.addEventListener('mousemove',e=>{
+  const x=(e.clientX/innerWidth-.5)*35,y=(e.clientY/innerHeight-.5)*25;
+  document.querySelectorAll('.orb').forEach((o,i)=>{const f=i===0?1:-.7;o.style.transform=`translate(${x*f}px,${y*f}px)`;});
+},{passive:true});
+</script>
 </body>
 </html>
